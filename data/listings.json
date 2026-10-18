@@ -1,81 +1,30 @@
 {
-  "generated_at": "2026-10-18T00:00:00Z",
+  "generated_at": "2026-10-18T00:16:01Z",
   "demo": true,
+  "data_label": "Offline dry-run fixture (synthetic) — not live sourcing",
+  "market_note": "Market indicator is a PokemonPriceTracker provider estimate converted with a timestamped USD/JPY rate. It is an indicator for selecting cards, not a valuation or a deal verdict.",
   "listings": [
     {
-      "title": "リザードンex SAR 201/165 sv2a",
-      "price_jpy": 135000,
-      "condition": "6/6",
-      "status": "NEW",
-      "images": [
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mO46e8PAAN8AXjc3NA4AAAAAElFTkSuQmCC",
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mO4ucwfAAQqAc/Umk7wAAAAAElFTkSuQmCC"
-      ],
-      "detected_at": "2026-10-17T21:04:00Z"
-    },
-    {
-      "title": "ピカチュウVMAX CSR 225/184 s8b",
-      "price_jpy": 32000,
-      "condition": "6/6",
-      "status": "SEEN",
-      "images": [
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mO4ucwfAAQqAc/Umk7wAAAAAElFTkSuQmCC",
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mO4WesPAAPYAaZBfyjjAAAAAElFTkSuQmCC",
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mO46e8PAAN8AXjc3NA4AAAAAElFTkSuQmCC"
-      ],
-      "detected_at": "2026-10-17T09:41:00Z"
-    },
-    {
-      "title": "ゲンガーVMAX HR 114/100 s9",
-      "price_jpy": 29800,
-      "condition": "4/6",
-      "status": "NEW",
-      "images": [
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mPo8r8JAAMZAbM4eaRqAAAAAElFTkSuQmCC",
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mPwP3kSAANMAeJ+BcM1AAAAAElFTkSuQmCC"
-      ],
-      "detected_at": "2026-10-16T18:12:00Z"
-    },
-    {
-      "title": "ミュウツーex SAR 183/165 sv2a",
-      "price_jpy": 12800,
-      "condition": "5/6",
-      "status": "NEW",
-      "images": [
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mPo8r8JAAMZAbM4eaRqAAAAAElFTkSuQmCC"
-      ],
-      "detected_at": "2026-10-16T07:55:00Z"
-    },
-    {
-      "title": "カビゴンAR 181/165 sv2a",
-      "price_jpy": 7800,
-      "condition": "5/6",
-      "status": "NEW",
-      "images": [
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mPwr70JAALEAaYm7ZbQAAAAAElFTkSuQmCC",
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mPwP3kSAANMAeJ+BcM1AAAAAElFTkSuQmCC"
-      ],
-      "detected_at": "2026-10-15T22:30:00Z"
-    },
-    {
-      "title": "イーブイAR 188/165 sv2a",
-      "price_jpy": 4500,
-      "condition": "3/6",
-      "status": "INACTIVE",
-      "images": [
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mPwP1gLAALwAY4D6u8sAAAAAElFTkSuQmCC"
-      ],
-      "detected_at": "2026-10-15T11:02:00Z"
-    },
-    {
-      "title": "モクロー 001/098 S11",
+      "title": "Current Mercari card",
       "price_jpy": 1000,
+      "market_indicator_jpy": 5000,
       "condition": "1/6",
       "status": "NEW",
       "images": [
-        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mNYcdIfAAPdAcG66gThAAAAAElFTkSuQmCC"
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/BboAAAAASUVORK5CYII=",
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/BboAAAAASUVORK5CYII="
       ],
-      "detected_at": "2026-10-14T16:47:00Z"
+      "detected_at": "2026-10-16T12:00:00Z"
+    }
+  ],
+  "excluded": [
+    {
+      "title": "Current Mercari card",
+      "reason": "Current Mercari ask must match search and be at least 1000 JPY"
+    },
+    {
+      "title": "Malformed detail card",
+      "reason": "Mercari page text is missing"
     }
   ]
 }
