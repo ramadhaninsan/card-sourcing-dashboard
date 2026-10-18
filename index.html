@@ -8,6 +8,17 @@
   :root { color-scheme: light; }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
   body {
     margin: 0;
     font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -87,6 +98,33 @@
   .muted { margin: 0; color: #555; font-size: .8rem; }
   .market { margin: 0 0 2px; font-weight: 600; font-size: .95rem; }
   .market-sub { margin: 0 0 6px; color: #555; font-size: .78rem; }
+  .market-prices { margin-top: 20px; }
+  .market-prices h2 { margin: 0 0 4px; font-size: 1.05rem; }
+  .market-intro { margin: 0 0 8px; color: #555; font-size: .82rem; }
+  .table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  .table-scroll:focus-visible { outline: 2px solid #555; outline-offset: 2px; }
+  .market-table { width: 100%; min-width: 640px; border-collapse: collapse; font-size: .85rem; }
+  .market-table th, .market-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e5e5e5;
+    text-align: left;
+    vertical-align: top;
+  }
+  .market-table thead th { background: #f0f0ec; font-size: .78rem; letter-spacing: .02em; }
+  .market-table tbody th { font-weight: 600; overflow-wrap: anywhere; }
+  .market-table tbody td { overflow-wrap: anywhere; }
+  .market-table tbody tr:nth-child(even) { background: #fafaf8; }
+  .market-table tbody tr:last-child th, .market-table tbody tr:last-child td { border-bottom: 0; }
+  .market-table .num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .market-table .date { white-space: nowrap; }
+  .market-table .rule { white-space: nowrap; }
   .thumbs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   .thumbs img { width: 48px; height: 48px; object-fit: cover; background: #eee; border: 1px solid #ccc; border-radius: 4px; }
   .data-meta { margin: 6px 0 0; color: #555; font-size: .8rem; }
@@ -144,6 +182,25 @@
     <section class="grid" id="listings" aria-label="Listings"></section>
     <p class="empty" id="empty" hidden></p>
     <p class="note" id="marketNote" hidden></p>
+    <section class="market-prices" id="marketSection" hidden aria-labelledby="marketHeading">
+      <h2 id="marketHeading">Market prices (provider estimates)</h2>
+      <p class="market-intro" id="marketIntro">Cached provider estimates the run considered, shown in JPY. Only estimates of at least ¥5,000 select a card.</p>
+      <div class="table-scroll" role="region" aria-labelledby="marketHeading" tabindex="0">
+        <table class="market-table">
+          <caption class="sr-only">Market prices (provider estimates) in JPY</caption>
+          <thead>
+            <tr>
+              <th scope="col">Card</th>
+              <th scope="col" class="num">Market indicator</th>
+              <th scope="col" class="num">Ask</th>
+              <th scope="col">Estimate date</th>
+              <th scope="col" class="rule">Rule (≥ ¥5,000)</th>
+            </tr>
+          </thead>
+          <tbody id="marketBody"></tbody>
+        </table>
+      </div>
+    </section>
     <section class="excluded" id="excluded" hidden aria-labelledby="excludedHeading">
       <h2 id="excludedHeading">Excluded by this run</h2>
       <p class="excluded-intro">Items the run rejected before listing, with the recorded reason.</p>
@@ -170,6 +227,8 @@
   var grid = document.getElementById('listings');
   var emptyBox = document.getElementById('empty');
   var marketNote = document.getElementById('marketNote');
+  var marketSection = document.getElementById('marketSection');
+  var marketBody = document.getElementById('marketBody');
   var excludedSection = document.getElementById('excluded');
   var excludedList = document.getElementById('excludedList');
 
@@ -187,6 +246,57 @@
 
   function hasMarketIndicator(listing) {
     return typeof listing.market_indicator_jpy === 'number' && Number.isFinite(listing.market_indicator_jpy);
+  }
+
+  function formatYenCell(value) {
+    var n = Number(value);
+    return Number.isFinite(n) && n > 0 ? '¥' + n.toLocaleString('en-US') : '—';
+  }
+
+  function formatUtcTimestamp(value) {
+    if (value === null || value === undefined || value === '') return '';
+    var d = new Date(value);
+    return Number.isNaN(d.getTime()) ? '' : d.toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+  }
+
+  function buildMarketRow(entry) {
+    var row = makeEl('tr');
+
+    var cardLabel = typeof entry.card === 'string' && entry.card.trim() ? entry.card.trim() : '—';
+    var cardCell = makeEl('th', '', cardLabel);
+    cardCell.scope = 'row';
+    row.appendChild(cardCell);
+
+    row.appendChild(makeEl('td', 'num', formatYenCell(entry.market_indicator_jpy)));
+    row.appendChild(makeEl('td', 'num', formatYenCell(entry.ask_jpy)));
+
+    var estimateAt = formatUtcTimestamp(entry.estimate_at);
+    row.appendChild(makeEl('td', 'date', estimateAt || '—'));
+
+    var rule = entry.meets_floor === true ? 'qualifies'
+      : entry.meets_floor === false ? 'below floor' : '—';
+    row.appendChild(makeEl('td', 'rule', rule));
+
+    return row;
+  }
+
+  function renderMarket(entries) {
+    marketBody.replaceChildren();
+    if (!Array.isArray(entries) || entries.length === 0) {
+      marketSection.hidden = true;
+      return;
+    }
+    var rows = [];
+    entries.forEach(function (entry) {
+      if (!entry || typeof entry !== 'object') return;
+      rows.push(buildMarketRow(entry));
+    });
+    if (rows.length === 0) {
+      marketSection.hidden = true;
+      return;
+    }
+    marketBody.replaceChildren.apply(marketBody, rows);
+    marketSection.hidden = false;
   }
 
   function buildCard(listing) {
@@ -220,9 +330,9 @@
     meta.appendChild(makeEl('span', 'condition', 'Condition ' + (listing.condition || '—')));
     body.appendChild(meta);
 
-    var detected = new Date(listing.detected_at);
-    if (!Number.isNaN(detected.getTime())) {
-      body.appendChild(makeEl('p', 'muted', 'Detected ' + detected.toISOString().slice(0, 16).replace('T', ' ') + ' UTC'));
+    var detected = formatUtcTimestamp(listing.detected_at);
+    if (detected) {
+      body.appendChild(makeEl('p', 'muted', 'Detected ' + detected));
     }
 
     if (images.length > 1) {
@@ -311,11 +421,13 @@
         }
 
         var marketNoteText = typeof data.market_note === 'string' ? data.market_note.trim() : '';
-        if (marketNoteText || state.all.some(hasMarketIndicator)) {
+        var hasMarketRows = Array.isArray(data.market) && data.market.length > 0;
+        if (marketNoteText || state.all.some(hasMarketIndicator) || hasMarketRows) {
           marketNote.textContent = marketNoteText || 'Market indicator is a provider estimate, not a valuation.';
           marketNote.hidden = false;
         }
 
+        renderMarket(data.market);
         renderExcluded(Array.isArray(data.excluded) ? data.excluded : []);
         render();
       })

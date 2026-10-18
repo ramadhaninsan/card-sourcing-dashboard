@@ -26,6 +26,10 @@ Top level:
 - `market_note` — caveat about the market indicator, shown once below the list.
 - `listings` — array of listing objects.
 - `excluded` — array of rejected items, each with `title` and `reason`.
+- `market` — array of cached market-estimate rows the run considered, in the
+  export's order. Each row has `card`, `market_indicator_jpy`, `meets_floor`
+  (boolean), `estimate_at` (ISO timestamp), and `ask_jpy` (the matched eligible
+  listing's ask, or `null` when the estimate matched no listing).
 
 Per listing:
 
@@ -50,6 +54,33 @@ valuation and **not** a deal verdict, and the page treats it that way:
 - The page never derives anything from the two numbers: no savings, percentage,
   gap, "under market" flag, or verdict of any kind.
 
+## Market prices table
+
+Below the caveat, the "Market prices (provider estimates)" section renders the
+top-level `market` array as a real table, in the data file's order. The table is
+independent of search, sort, and the INACTIVE toggle — it always shows every row
+the run considered. Columns:
+
+- **Card** — the row's `card` label.
+- **Market indicator** — the provider estimate in JPY with thousands separators.
+  A missing, null, or non-positive value is shown as `—`.
+- **Ask** — the matched eligible listing's `ask_jpy` in JPY, or `—` when
+  `ask_jpy` is absent or null.
+- **Estimate date** — `estimate_at` in UTC, matching the listing date style
+  (`YYYY-MM-DD HH:MM UTC`), or `—` when missing or invalid.
+- **Rule (≥ ¥5,000)** — the run's selection-rule result, worded `qualifies`
+  (`meets_floor: true`) or `below floor` (`meets_floor: false`), and `—` when the
+  flag is missing. This is a rule outcome, never a valuation or a deal verdict.
+
+The heading's explanation states that these are cached provider estimates the
+run considered, shown in JPY, and that only estimates of at least ¥5,000 select
+a card. The whole section is hidden when `market` is absent or empty, so no empty
+table is rendered. Missing cells are dashed — never `¥0`, `NaN`, or `undefined`.
+
+On narrow screens the table is wrapped in its own horizontally scrollable,
+keyboard-focusable region. The document itself must not scroll sideways: at
+390 px wide, `document.scrollWidth` should equal `window.innerWidth`.
+
 ## Excluded section
 
 `excluded` entries are rendered as a small list titled "Excluded by this run",
@@ -70,7 +101,10 @@ Images are data URIs in the export (or ordinary files you add to the repo).
 - Search filters by title (case-insensitive, partial match, trimmed).
 - Sort by price (low → high / high → low); checkbox shows/hides `INACTIVE` items.
 - A results line shows "N of M shown" and an empty state appears when nothing matches.
-- The excluded list is not affected by search, sort, or the INACTIVE toggle.
+- The excluded list and the market prices table are not affected by search,
+  sort, or the INACTIVE toggle.
+- The market prices table scrolls horizontally inside its own wrapper on narrow
+  screens; the page body never scrolls sideways.
 - If `data/listings.json` cannot be loaded, an inline error is shown instead of a
   blank page.
 

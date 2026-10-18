@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-10-18T00:16:01Z",
+  "generated_at": "2026-10-18T01:59:44Z",
   "demo": true,
   "data_label": "Offline dry-run fixture (synthetic) — not live sourcing",
-  "market_note": "Market indicator is a PokemonPriceTracker provider estimate converted with a timestamped USD/JPY rate. It is an indicator for selecting cards, not a valuation or a deal verdict.",
+  "market_note": "Market indicator is a third-party estimate converted with a timestamped USD/JPY rate. It is an indicator for selecting cards, not a valuation or a deal verdict.",
   "listings": [
     {
       "title": "Current Mercari card",
@@ -25,6 +25,15 @@
     {
       "title": "Malformed detail card",
       "reason": "Mercari page text is missing"
+    }
+  ],
+  "market": [
+    {
+      "card": "Sample Set 001/100 SAR",
+      "market_indicator_jpy": 5000,
+      "meets_floor": true,
+      "estimate_at": "2026-10-16T10:00:00Z",
+      "ask_jpy": 1000
     }
   ]
 }
